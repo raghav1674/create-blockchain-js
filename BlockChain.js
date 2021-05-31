@@ -1,11 +1,21 @@
 const sha256 = require("sha256");
 
+
 function BlockChain() {
   this.chain = []; // will keep all the transactions
   this.pendingTransactions = []; // will keep the transactions which are not yet mined by block
 
   // genesis block the start block
-  this.createNewBlock(0,'0',this.hashBlock(this.proofOfWork('0','0'),'0','0'));
+  this.createNewBlock(
+    0,
+    "0",
+    this.hashBlock(this.proofOfWork("0", "0"), "0", "0")
+  );
+
+  // network related
+  this.currentNodeURL = "http://localhost:" + process.argv[2];
+
+  this.networkNodeURLs = [];
 }
 
 // create New Block
