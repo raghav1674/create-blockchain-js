@@ -24,7 +24,7 @@ bitcoin.createNewBlock(
   )
 );
 
-// to verify the block just hash it and check if first 4 are zeros
+// to verify the block just hash it and check if first 5 are zeros
 
 console.log(
   bitcoin
@@ -58,7 +58,7 @@ bitcoin.createNewBlock(
   )
 );
 
-// to verify the block just hash it and check if first 4 are zeros
+// to verify the block just hash it and check if first 5 are zeros
 
 
 console.log(bitcoin);

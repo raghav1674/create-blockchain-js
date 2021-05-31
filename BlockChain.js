@@ -87,7 +87,7 @@ BlockChain.prototype.hashBlock = function (
 };
 
 // proof of work : will make the blockChain secure as it has to more computation and energy
-// generate hash and increment nonce until the hash starting with 4 0's  not there.
+// generate hash and increment nonce until the hash starting with 5 0's  not there.
 
 BlockChain.prototype.proofOfWork = function (
   previousBlockHash,
@@ -102,7 +102,7 @@ BlockChain.prototype.proofOfWork = function (
     hash = this.hashBlock(nonce, previousBlockHash, currentBlockData);
   }
 
-  // return the nonce which will be used for next block and for validating a block we just have to hash and chcek if its valid hash ie starting 4 as 0's.
+  // return the nonce which will be used for next block and for validating a block we just have to hash and chcek if its valid hash ie starting 5 as 0's.
   return nonce;
 };
 
