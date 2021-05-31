@@ -1,3 +1,6 @@
+
+
+
 const BlockChain = require("../BlockChain");
 
 const bitcoin = new BlockChain();
@@ -57,6 +60,7 @@ bitcoin.createNewBlock(
     bitcoin.pendingTransactions
   )
 );
+
 
 // to verify the block just hash it and check if first 5 are zeros
 

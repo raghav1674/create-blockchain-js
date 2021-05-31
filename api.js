@@ -31,18 +31,58 @@ app.get("/blockchain", (request, response) => {
 /**
  *
  * @route POST /transactions
- * @desc returns the index of the next block in which these txns will be mined
- * @access Public
+ * @desc add to the pending txns & returns the index of the next block in which these txns will be mined
+ * @access Private
  *
  *
  */
 app.post("/transactions", (request, response) => {
-  const { amount, sender, recipient } = request.body;
+  const newTransaction = request.body;
 
-  const blockIndex = bitcoin.createNewTransaction(amount, sender, recipient);
+  const blockIndex =
+    bitcoin.addTransactionsToPendingTransactions(newTransaction);
 
   return response.status(201).json({
     note: `Transaction will be added in block ${blockIndex}`,
+  });
+});
+
+/**
+ *
+ * @route POST /transactions-broadcast
+ * @desc create new Transaction and broadcast
+ * @access Public
+ *
+ *
+ */
+app.post("/transactions-broadcast", (request, response) => {
+  const { amount, sender, recipient } = request.body;
+  const newTransaction = bitcoin.createNewTransaction(
+    amount,
+    sender,
+    recipient
+  );
+
+  // now broadcast this transaction to every node in n/w
+
+  const transactionPromises = [];
+
+  bitcoin.networkNodeURLs.forEach((nodeURL) => {
+    const requestOptions = {
+      uri: nodeURL + "/transactions",
+      method: "POST",
+      body: newTransaction,
+      json: true,
+    };
+
+    transactionPromises.push(rp(requestOptions));
+  });
+
+  // run all
+  Promise.all(transactionPromises).then((data) => {
+    return response.status(201).json({
+      note: "Transaction is created and broadcasted successfully",
+    });
   });
 });
 

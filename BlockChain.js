@@ -1,5 +1,5 @@
 const sha256 = require("sha256");
-
+const uuid = require("uuid").v4;
 
 function BlockChain() {
   this.chain = []; // will keep all the transactions
@@ -61,14 +61,17 @@ BlockChain.prototype.createNewTransaction = function (
     amount,
     sender,
     recipient,
+    transactionId: uuid().split("-").join(""),
   };
 
-  // add to the pendingTransaction list
+  return newTransaction;
+};
 
-  this.pendingTransactions.push(newTransaction);
-
-  // return the next block number
-
+// add txns to pending txns
+BlockChain.prototype.addTransactionsToPendingTransactions = function (
+  transactionObj
+) {
+  this.pendingTransactions.push(transactionObj);
   return this.getLastBlock()["index"] + 1;
 };
 
