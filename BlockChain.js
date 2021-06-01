@@ -109,4 +109,32 @@ BlockChain.prototype.proofOfWork = function (
   return nonce;
 };
 
+// validate the blockchain
+BlockChain.prototype.chainIsValid = function (blockChain) {
+  // check if the previousHash of current == hash of the previous
+  let validate = true;
+  for (let i = 1; i < blockChain.chain.length; i++) {
+    const currentBlock = blockChain.chain[i];
+    const previousBlock = blockChain.chain[i - 1];
+    const currentBlockPreviousHash = currentBlock["previousBlockHash"];
+    const previousBlockHash = previousBlock["hash"];
+
+    // check the hash of currentData
+    const blockHash = this.hashBlock(
+      currentBlock["nonce"],
+      currentBlock["previousBlockHash"],
+
+      {
+        index: currentBlock["index"],
+        transactions: currentBlock["transactions"],
+      }
+    );
+
+    if (blockHash.substring(0, 5) !== "00000") validate = false;
+
+    // check previous hash with current's previous Hash
+    if (previousBlockHash !== currentBlockPreviousHash) validate = false;
+  }
+};
+
 module.exports = BlockChain;
