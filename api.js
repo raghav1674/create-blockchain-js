@@ -37,12 +37,12 @@ app.get("/blockchain", (request, response) => {
  *
  */
 app.post("/transactions", (request, response) => {
-  const newTransaction = request.body;
+  const newTransaction = request.body.newTransaction;
 
   const blockIndex =
     bitcoin.addTransactionsToPendingTransactions(newTransaction);
 
-  return response.status(201).json({
+  response.status(201).json({
     note: `Transaction will be added in block ${blockIndex}`,
   });
 });
@@ -62,7 +62,8 @@ app.post("/transactions-broadcast", (request, response) => {
     sender,
     recipient
   );
-
+    // add the bitcoin for the current Node 
+    bitcoin.addTransactionsToPendingTransactions(newTransaction);
   // now broadcast this transaction to every node in n/w
 
   const transactionPromises = [];
@@ -71,16 +72,17 @@ app.post("/transactions-broadcast", (request, response) => {
     const requestOptions = {
       uri: nodeURL + "/transactions",
       method: "POST",
-      body: newTransaction,
+      body: { newTransaction },
       json: true,
     };
 
     transactionPromises.push(rp(requestOptions));
   });
 
+
   // run all
   Promise.all(transactionPromises).then((data) => {
-    return response.status(201).json({
+    response.status(201).json({
       note: "Transaction is created and broadcasted successfully",
     });
   });
