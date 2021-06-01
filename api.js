@@ -62,8 +62,8 @@ app.post("/transactions-broadcast", (request, response) => {
     sender,
     recipient
   );
-    // add the bitcoin for the current Node 
-    bitcoin.addTransactionsToPendingTransactions(newTransaction);
+  // add the bitcoin for the current Node
+  bitcoin.addTransactionsToPendingTransactions(newTransaction);
   // now broadcast this transaction to every node in n/w
 
   const transactionPromises = [];
@@ -78,7 +78,6 @@ app.post("/transactions-broadcast", (request, response) => {
 
     transactionPromises.push(rp(requestOptions));
   });
-
 
   // run all
   Promise.all(transactionPromises).then((data) => {
@@ -279,6 +278,62 @@ app.post("/register-node-bulk", (request, response) => {
 
   return response.status(201).json({
     note: "All node registered with new Node",
+  });
+});
+
+/**
+ *
+ * @route GET /consensus
+ * @desc validate the blockchain in current node and uses Longest Chain Rule
+ * @access Public
+ *
+ *
+ */
+
+app.get("/consensus", (request, response) => {
+  const blockChainPromises = [];
+  // get the blockchains on other nodes in the network and get the longest as long chain measn more proofOfWork
+  bitcoin.networkNodeURLs.forEach((nodeURL) => {
+    const blockChainOptions = {
+      uri: nodeURL + "/blockchain",
+      method: "GET",
+    };
+
+    blockChainPromises.push(rp(blockChainOptions));
+  });
+
+  Promise.all(blockChainPromises).then((blockChains) => {
+    const maxBlockChainLength = bitcoin.chain.length;
+    const maxBlockChain = bitcoin;
+    const newLongestChain = null;
+    const newLongestTransactions = null;
+
+    blockChains.forEach((blockChain) => {
+      // check for the longest block Chain
+
+      if (blockChain.chain.length > maxBlockChainLength) {
+        maxBlockChain = blockChain;
+        newLongestChain = blockChain.chain;
+        newLongestTransactions = blockChain.pendingTransactions;
+      }
+
+      if (
+        !newLongestChain ||
+        (newLongestChain && !bitcoin.chainIsValid(maxBlockChain))
+      ) {
+        return response.status(200).json({
+          note: "Current chain has not been modified",
+          chain: bitcoin.chain,
+        });
+      } else if (newLongestChain && bitcoin.chainIsValid(maxBlockChain))
+        // update the chain and the transactions
+        bitcoin.chain = newLongestChain;
+      bitcoin.pendingTransactions = newLongestTransactions;
+      return response.status(200).json({
+        note: "Current chain has been modified",
+        chain: bitcoin.chain,
+      });
+    });
   });
 });
 

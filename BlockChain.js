@@ -135,6 +135,8 @@ BlockChain.prototype.chainIsValid = function (blockChain) {
     // check previous hash with current's previous Hash
     if (previousBlockHash !== currentBlockPreviousHash) validate = false;
   }
+
+  return validate;
 };
 
 module.exports = BlockChain;
