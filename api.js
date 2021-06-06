@@ -16,7 +16,7 @@ const nodeAddress = uuid().split("-").join("");
 
 // middlewares to parse the request body and form data
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 /**
  *
@@ -60,12 +60,16 @@ app.post("/transactions", (request, response) => {
  *
  */
 app.post("/transactions-broadcast", (request, response) => {
+
+ 
   const { amount, sender, recipient } = request.body;
+
   const newTransaction = bitcoin.createNewTransaction(
     amount,
     sender,
     recipient
   );
+
   // add the bitcoin for the current Node
   bitcoin.addTransactionsToPendingTransactions(newTransaction);
   // now broadcast this transaction to every node in n/w
@@ -87,6 +91,7 @@ app.post("/transactions-broadcast", (request, response) => {
   Promise.all(transactionPromises).then((data) => {
     response.status(201).json({
       note: "Transaction is created and broadcasted successfully",
+      newTransaction,
     });
   });
 });
@@ -373,6 +378,17 @@ app.get("/address/:address", function (req, res) {
 app.get("/block-explorer", function (req, res) {
   res.sendFile("./block-explorer/index.html", { root: __dirname });
 });
+
+app.get("/block-operate", function (req, res) {
+  res.sendFile("./block-explorer/operate.html", { root: __dirname });
+});
+
+
+// image 
+app.get("/logo", function (req, res) {
+  res.sendFile("./block-explorer/bootstrap-logo.svg", { root: __dirname });
+});
+
 
 const PORT = process.env.PORT || process.argv[2];
 
