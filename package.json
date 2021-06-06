@@ -4,16 +4,12 @@
   "description": "",
   "main": "BlockChain.js",
   "scripts": {
-    "test": "node ./test/TestBlockChain.js",
-    "node_1": "nodemon api.js 3001",
-    "node_2": "nodemon api.js 3002",
-    "node_3": "nodemon api.js 3003",
-    "node_4": "nodemon api.js 3004",
-    "node_5": "nodemon api.js 3005"
+      "start":"node api.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",

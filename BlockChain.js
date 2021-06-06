@@ -13,7 +13,7 @@ function BlockChain() {
   );
 
   // network related
-  this.currentNodeURL = "http://localhost:" + process.argv[2];
+  this.currentNodeURL = "http://localhost:" + process.env.PORT;
 
   this.networkNodeURLs = [];
 }

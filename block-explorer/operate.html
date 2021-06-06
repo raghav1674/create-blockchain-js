@@ -69,8 +69,8 @@
             async function addTransaction() {
 
 
-                const txnsURI = "http://localhost:3001/transactions-broadcast";
-                const mineURI = "http://localhost:3001/mine";
+                const txnsURI = "http://localhost:8000/transactions-broadcast";
+                const mineURI = "http://localhost:8000/mine";
 
 
 
@@ -112,7 +112,8 @@
                         document.querySelector("#successTxn").classList.add("alert-success");
                         document.querySelector("#successTxn").innerHTML = `<h4 class="alert-heading">Transaction Added and Block Mined !</h4>
                 <p>Transaction Id: ${txnId}</p>
-                <hr>`
+                <p>Block Hash: ${data.blockHash}</p>
+                `
                     })
                     .catch(err => {
 

@@ -6,6 +6,8 @@ const uuid = require("uuid").v4;
 
 const rp = require("request-promise");
 
+const cors = require("cors");
+
 // actual functionality
 
 const BlockChain = require("./BlockChain");
@@ -17,7 +19,7 @@ const nodeAddress = uuid().split("-").join("");
 // middlewares to parse the request body and form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors());
 /**
  *
  * @route GET /blockchain
@@ -60,8 +62,6 @@ app.post("/transactions", (request, response) => {
  *
  */
 app.post("/transactions-broadcast", (request, response) => {
-
- 
   const { amount, sender, recipient } = request.body;
 
   const newTransaction = bitcoin.createNewTransaction(
@@ -186,6 +186,7 @@ app.get("/mine", (request, response) => {
     return rp(newTransactionOptions).then((data) => {
       response.status(200).json({
         note: "New block has been mined adn broadcasted succesfully",
+        blockHash: hash,
       });
     });
   });
@@ -379,18 +380,16 @@ app.get("/block-explorer", function (req, res) {
   res.sendFile("./block-explorer/index.html", { root: __dirname });
 });
 
-app.get("/block-operate", function (req, res) {
+app.get("/", function (req, res) {
   res.sendFile("./block-explorer/operate.html", { root: __dirname });
 });
 
-
-// image 
+// image
 app.get("/logo", function (req, res) {
   res.sendFile("./block-explorer/bootstrap-logo.svg", { root: __dirname });
 });
 
-
-const PORT = process.env.PORT || process.argv[2];
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server is listening at ${PORT}`);
