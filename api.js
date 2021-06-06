@@ -6,6 +6,8 @@ const uuid = require("uuid").v4;
 
 const rp = require("request-promise");
 
+// actual functionality
+
 const BlockChain = require("./BlockChain");
 
 const bitcoin = new BlockChain();
@@ -24,6 +26,7 @@ app.use(express.urlencoded({ extended: false }));
  *
  *
  */
+
 app.get("/blockchain", (request, response) => {
   response.status(200).json(bitcoin);
 });
@@ -36,6 +39,7 @@ app.get("/blockchain", (request, response) => {
  *
  *
  */
+
 app.post("/transactions", (request, response) => {
   const newTransaction = request.body.newTransaction;
 
@@ -297,7 +301,7 @@ app.get("/consensus", (request, response) => {
     const blockChainOptions = {
       uri: nodeURL + "/blockchain",
       method: "GET",
-      json:true
+      json: true,
     };
 
     blockChainPromises.push(rp(blockChainOptions));
@@ -338,39 +342,36 @@ app.get("/consensus", (request, response) => {
   });
 });
 // get block by blockHash
-app.get('/block/:blockHash', function(req, res) { 
-	const blockHash = req.params.blockHash;
-	const correctBlock = bitcoin.getBlock(blockHash);
-	res.json({
-		block: correctBlock
-	});
+app.get("/block/:blockHash", function (req, res) {
+  const blockHash = req.params.blockHash;
+  const correctBlock = bitcoin.getBlock(blockHash);
+  res.json({
+    block: correctBlock,
+  });
 });
-
 
 // get transaction by transactionId
-app.get('/transaction/:transactionId', function(req, res) {
-	const transactionId = req.params.transactionId;
-	const trasactionData = bitcoin.getTransaction(transactionId);
-	res.json({
-		transaction: trasactionData.transaction,
-		block: trasactionData.block
-	});
+app.get("/transaction/:transactionId", function (req, res) {
+  const transactionId = req.params.transactionId;
+  const trasactionData = bitcoin.getTransaction(transactionId);
+  res.json({
+    transaction: trasactionData.transaction,
+    block: trasactionData.block,
+  });
 });
-
 
 // get address by address
-app.get('/address/:address', function(req, res) {
-	const address = req.params.address;
-	const addressData = bitcoin.getAddressData(address);
-	res.json({
-		addressData: addressData
-	});
+app.get("/address/:address", function (req, res) {
+  const address = req.params.address;
+  const addressData = bitcoin.getAddressData(address);
+  res.json({
+    addressData: addressData,
+  });
 });
 
-
 // block explorer
-app.get('/block-explorer', function(req, res) {
-	res.sendFile('./block-explorer/index.html', { root: __dirname });
+app.get("/block-explorer", function (req, res) {
+  res.sendFile("./block-explorer/index.html", { root: __dirname });
 });
 
 const PORT = process.env.PORT || process.argv[2];
